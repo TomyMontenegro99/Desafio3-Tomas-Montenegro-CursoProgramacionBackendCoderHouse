@@ -52,25 +52,50 @@ const productManager = new ProductManager();
 // Agregar productos
 productManager.addProduct({
   title: "Producto 1",
-  description: "Descripción del producto 1",
+  description: "Descripción sobre el producto 1",
   price: 10.99,
-  thumbnail: "ruta-imagen-1",
+  thumbnail:
+    "https://st2.depositphotos.com/1867553/10855/i/600/depositphotos_108556934-stock-photo-capybara-in-the-national-park.jpg",
   code: "P1",
   stock: 5,
 });
 
 productManager.addProduct({
   title: "Producto 2",
-  description: "Descripción del producto 2",
+  description: "Descripción sobre el producto 2",
   price: 19.99,
-  thumbnail: "ruta-imagen-2",
+  thumbnail:
+    "https://st2.depositphotos.com/1867553/10855/i/600/depositphotos_108556934-stock-photo-capybara-in-the-national-park.jpg",
   code: "P2",
-  stock: 8,
+  stock: 3,
 });
 
 // Obtener todos los productos
 const allProducts = productManager.getProducts();
 console.log(allProducts);
+
+productManager.addProduct({
+  title: "producto prueba",
+  description: "Este es un producto prueba",
+  price: 200,
+  thumbnail: "Sin imagen",
+  code: "abc123",
+  stock: 25,
+});
+
+//Vuelvo a mostrar los productos
+const newProducts = productManager.getProducts();
+console.log(newProducts);
+
+//Intento agregar el mismo producto
+productManager.addProduct({
+  title: "producto prueba",
+  description: "Este es un producto prueba",
+  price: 200,
+  thumbnail: "Sin imagen",
+  code: "abc123",
+  stock: 25,
+});
 
 // Obtener un producto por su id
 const product = productManager.getProductById(1);
