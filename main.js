@@ -1,11 +1,35 @@
+const fs = require("fs");
+
 class ProductManager {
-  constructor() {
+  constructor(filePath) {
+    this.filePath = filePath;
     this.products = [];
     this.lastProductId = 0;
+    this.loadProducts();
+  }
+
+  loadProducts() {
+    try {
+      const data = fs.readFileSync(this.filePath, "utf8");
+      this.products = JSON.parse(data);
+      if (this.products.length > 0) {
+        const lastProduct = this.products[this.products.length - 1];
+        this.lastProductId = lastProduct.id;
+      }
+    } catch (err) {
+      console.error("Error al cargar los productos:", err);
+    }
+  }
+
+  saveProducts() {
+    try {
+      fs.writeFileSync(this.filePath, JSON.stringify(this.products));
+    } catch (err) {
+      console.error("Error al guardar los productos:", err);
+    }
   }
 
   addProduct(product) {
-    // Validar que todos los campos sean obligatorios
     if (
       !product.title ||
       !product.description ||
@@ -18,17 +42,15 @@ class ProductManager {
       return;
     }
 
-    // Validar que el campo "code" no esté duplicado
     const duplicateProduct = this.products.find((p) => p.code === product.code);
     if (duplicateProduct) {
       console.error("El código del producto ya existe.");
       return;
     }
 
-    // Asignar un id autoincrementable
     product.id = ++this.lastProductId;
-
     this.products.push(product);
+    this.saveProducts();
   }
 
   getProducts() {
@@ -42,6 +64,29 @@ class ProductManager {
     } else {
       console.error("Producto no encontrado.");
       return null;
+    }
+  }
+
+  updateProduct(id, updatedFields) {
+    const productIndex = this.products.findIndex((p) => p.id === id);
+    if (productIndex !== -1) {
+      this.products[productIndex] = {
+        ...this.products[productIndex],
+        ...updatedFields,
+      };
+      this.saveProducts();
+    } else {
+      console.error("Producto no encontrado.");
+    }
+  }
+
+  deleteProduct(id) {
+    const productIndex = this.products.findIndex((p) => p.id === id);
+    if (productIndex !== -1) {
+      this.products.splice(productIndex, 1);
+      this.saveProducts();
+    } else {
+      console.error("Producto no encontrado.");
     }
   }
 }
