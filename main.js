@@ -91,60 +91,33 @@ class ProductManager {
   }
 }
 
-// Ejemplo de uso:
-const productManager = new ProductManager();
+const filePath = "./products.json"; // Ruta del archivo donde se guardarán los productos
 
-// Agregar productos
-productManager.addProduct({
-  title: "Producto 1",
-  description: "Descripción sobre el producto 1",
-  price: 10.99,
-  thumbnail:
-    "https://st2.depositphotos.com/1867553/10855/i/600/depositphotos_108556934-stock-photo-capybara-in-the-national-park.jpg",
-  code: "P1",
-  stock: 5,
-});
+const productManager = new ProductManager(filePath);
 
-productManager.addProduct({
-  title: "Producto 2",
-  description: "Descripción sobre el producto 2",
-  price: 19.99,
-  thumbnail:
-    "https://st2.depositphotos.com/1867553/10855/i/600/depositphotos_108556934-stock-photo-capybara-in-the-national-park.jpg",
-  code: "P2",
-  stock: 3,
-});
+const products = productManager.getProducts();
+console.log(products); // []
 
-// Obtener todos los productos
-const allProducts = productManager.getProducts();
-console.log(allProducts);
-
-productManager.addProduct({
+const product = {
   title: "producto prueba",
   description: "Este es un producto prueba",
   price: 200,
   thumbnail: "Sin imagen",
   code: "abc123",
   stock: 25,
-});
+};
+productManager.addProduct(product);
 
-//Vuelvo a mostrar los productos
-const newProducts = productManager.getProducts();
-console.log(newProducts);
+const updatedProducts = productManager.getProducts();
+console.log(updatedProducts);
 
-//Intento agregar el mismo producto
-productManager.addProduct({
-  title: "producto prueba",
-  description: "Este es un producto prueba",
-  price: 200,
-  thumbnail: "Sin imagen",
-  code: "abc123",
-  stock: 25,
-});
+const productId = 1; // El id del producto a obtener
+const productById = productManager.getProductById(productId);
+console.log(productById);
 
-// Obtener un producto por su id
-const product = productManager.getProductById(1);
-console.log(product);
+const updatedFields = {
+  price: 300,
+};
+productManager.updateProduct(productId, updatedFields);
 
-// Intentar obtener un producto con un id inexistente
-const nonExistentProduct = productManager.getProductById(10);
+productManager.deleteProduct(productId);
