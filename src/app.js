@@ -1,5 +1,7 @@
+const express = require("express");
 const fs = require("fs");
 
+// Importar la clase ProductManager
 class ProductManager {
   constructor(filePath) {
     this.filePath = filePath;
@@ -91,33 +93,56 @@ class ProductManager {
   }
 }
 
+// Crear una instancia de ProductManager
 const filePath = "./products.json"; // Ruta del archivo donde se guardarán los productos
-
 const productManager = new ProductManager(filePath);
 
-const products = productManager.getProducts();
-console.log(products); // []
+// Crear una instancia de la aplicación Express
+const app = express();
+app.use(express.json());
 
-const product = {
-  title: "producto prueba",
-  description: "Este es un producto prueba",
-  price: 200,
-  thumbnail: "Sin imagen",
-  code: "abc123",
-  stock: 25,
-};
-productManager.addProduct(product);
+// Ruta '/products'
+app.get("/products", async (req, res) => {
+  try {
+    const limit = req.query.limit; // Obtener el valor del parámetro 'limit' de la consulta
+    const products = await getProducts(limit);
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ error: "Error al obtener los productos" });
+  }
+});
 
-const updatedProducts = productManager.getProducts();
-console.log(updatedProducts);
+// Ruta '/products/:pid'
+app.get("/products/:pid", async (req, res) => {
+  try {
+    const productId = parseInt(req.params.pid); // Obtener el valor del parámetro 'pid' de la URL
+    const product = await getProductById(productId);
+    res.json(product);
+  } catch (error) {
+    res.status(404).json({ error: "Producto no encontrado" });
+  }
+});
 
-const productId = 1; // El id del producto a obtener
-const productById = productManager.getProductById(productId);
-console.log(productById);
+// Función para obtener los productos
+async function getProducts(limit) {
+  const products = productManager.getProducts();
+  if (limit) {
+    return products.slice(0, limit); // Devolver solo el número de productos solicitado
+  }
+  return products; // Devolver todos los productos
+}
 
-const updatedFields = {
-  price: 300,
-};
-productManager.updateProduct(productId, updatedFields);
+// Función para obtener un producto por su id
+async function getProductById(productId) {
+  const product = productManager.getProductById(productId);
+  if (product) {
+    return product;
+  }
+  throw new Error("Producto no encontrado");
+}
 
-productManager.deleteProduct(productId);
+// Iniciar el servidor
+const port = 8080;
+app.listen(port, () => {
+  console.log(`Servidor escuchando en el puerto ${port}`);
+});
